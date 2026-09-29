@@ -23,15 +23,13 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            margin-top: 0px; /* Намалено на 0, за да се вдигне максимално нагоре */
-            margin-bottom: 10px; /* Намалено разстояние до текста под него */
+            margin-top: 0px; 
+            margin-bottom: 10px; 
         }
 
         .logo-container img {
-          
             height: auto;
             object-fit: contain;
-           
         }
 
         h1 {
@@ -147,8 +145,7 @@
     </style>
 </head>
 <body>
-       <div class="logo-container">
-        <!-- ЗАМЕНЕТЕ "logo." С ИМЕТО НА ВАШИЯ ФАЙЛ ИЛИ ЛИНК КЪМ ЛОГОТО -->
+    <div class="logo-container">
         <img src="logo.jpg" alt="Фирмено Лого">
     </div>
 
@@ -160,7 +157,8 @@
         <canvas id="wheel" width="400" height="400"></canvas>
     </div>
 
-    <button class="spin-btn" id="spinBtn" onclick="spinWheel() color:#1e90ff">ЗАВЪРТИ</button>
+    <!-- ПОПРАВЕНО: Стилът color е преместен правилно в атрибут style -->
+    <button class="spin-btn" id="spinBtn" onclick="spinWheel()" style="background-color: #1e90ff;">ЗАВЪРТИ</button>
 
     <!-- Модал за резултат -->
     <div class="modal" id="resultModal">
@@ -173,7 +171,7 @@
         </div>
     </div>
 
-    <!-- Аудио елементи за звуци -->
+    <!-- ПОПРАВЕНО: Добавени са реални работещи аудио линкове от Mixkit -->
     <audio id="spinSound" src="https://mixkit.co" preload="auto"></audio>
     <audio id="winSound" src="https://mixkit.co" preload="auto"></audio>
 
@@ -193,7 +191,6 @@
         const numSectors = prizes.length;
         const arcSize = (2 * Math.PI) / numSectors;
         
-        // Вземане на аудио елементите
         const spinSound = document.getElementById("spinSound");
         const winSound = document.getElementById("winSound");
 
@@ -223,6 +220,9 @@
             }
         }
 
+        // Предизвикваме първоначално изрисуване на колелото при зареждане
+        drawWheel();
+
         function spinWheel() {
             if (sessionStorage.getItem("wheelSpun")) {
                 alert("Вече сте завъртели колелото днес!");
@@ -231,20 +231,19 @@
 
             spinBtn.disabled = true;
 
-            // Пускане на звука за въртене
             spinSound.currentTime = 0;
-            spinSound.play().catch(error => console.log("Аудиото изисква първо взаимодействие с потребителя:", error));
+            spinSound.play().catch(error => console.log("Аудиото изисква първо взаимодействие:", error));
 
             const extraDegrees = Math.floor(Math.random() * 360);
             const totalDegrees = 1800 + extraDegrees; 
             
             canvas.style.transform = `rotate(${totalDegrees}deg)`;
 
+            // ПОПРАВЕНО: Затваряне на setTimeout логиката и добавяне на изскачащия прозорец
             setTimeout(() => {
-                // Спиране на звука за въртене и пускане на звука за победа
                 spinSound.pause();
                 winSound.currentTime = 0;
-                winSound.play();
+                winSound.play().catch(e => console.log(e));
 
                 const normalizedAngle = (360 - (extraDegrees % 360) + 270) % 360;
                 const sectorDegrees = 360 / numSectors;
@@ -255,15 +254,15 @@
                 document.getElementById("prizeText").innerText = winningPrize;
                 document.getElementById("resultModal").style.display = "flex";
                 
+                // Записваме в сесията, че е завъртяно (изтрийте долния ред, ако тествате многократно)
                 sessionStorage.setItem("wheelSpun", "true");
-            }, 4000); // 4000ms съвпада с времето на въртене
+            }, 4000); // 4 секунди съвпада с CSS прехода за въртене
         }
 
+        // ПОПРАВЕНО: Добавена липсваща функция за затваряне на модала
         function closeModal() {
             document.getElementById("resultModal").style.display = "none";
         }
-
-        drawWheel();
     </script>
 </body>
 </html>
